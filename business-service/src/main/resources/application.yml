@@ -1,0 +1,40 @@
+server:
+  port: ${BUSINESS_PORT:8070}
+
+spring:
+  config:
+    import: optional:nacos:aftersales-business.yaml
+  application:
+    name: aftersales-business
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/aftersales_agent?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false}
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:}
+  sql:
+    init:
+      mode: always
+      encoding: utf-8
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+      config:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+        file-extension: yaml
+  ai:
+    mcp:
+      server:
+        name: aftersales-business-mcp
+        version: 1.0.0
+        type: SYNC
+        protocol: STREAMABLE
+
+business:
+  delayed-shipment-threshold-hours: ${DELAYED_SHIPMENT_HOURS:48}
+  redis-cache-seconds: ${REDIS_CACHE_SECONDS:600}
+  elasticsearch-index-name: ${ES_INDEX:aftersales_products}
+  elasticsearch-url: ${ES_URL:http://localhost:19200}

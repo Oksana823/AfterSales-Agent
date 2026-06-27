@@ -1,9 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Run All" type="CompoundRunConfigurationType">
-    <toRun name="AgentApplication" type="Application" />
-    <toRun name="AgentWorkerApplication" type="Application" />
-    <toRun name="BusinessApplication" type="Application" />
-    <toRun name="GatewayApplication" type="Application" />
-    <method v="2" />
-  </configuration>
-</component>
