@@ -1,0 +1,58 @@
+server:
+  port: 8050
+
+spring:
+  config:
+    import: optional:nacos:aftersales-agent.yaml
+  application:
+    name: aftersales-agent
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/aftersales_agent?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false}
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:666666}
+  sql:
+    init:
+      mode: always
+      encoding: utf-8
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+      config:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+        file-extension: yaml
+  ai:
+    model:
+      chat: openai
+    openai:
+      base-url: https://api.deepseek.com
+      api-key: ${AI_API_KEY:not-configured}
+      chat:
+        options:
+          model: deepseek-v4-flash
+          temperature: ${AI_TEMPERATURE:0.2}
+    mcp:
+      server:
+        name: aftersales-mcp-server
+        version: 1.0.0
+        type: SYNC
+        protocol: STREAMABLE
+
+harness:
+  llm-enabled: ${AI_ENABLED:true}
+  mcp-server-url: ${MCP_SERVER_URL:http://localhost:8050}
+  mcp-client-enabled: ${MCP_CLIENT_ENABLED:true}
+  mcp-fallback-enabled: ${MCP_FALLBACK_ENABLED:true}
+  mcp-request-timeout-seconds: ${MCP_REQUEST_TIMEOUT_SECONDS:10}
+  max-tool-calls: ${AGENT_MAX_TOOL_CALLS:12}
+  distributed-agents-enabled: ${DISTRIBUTED_AGENTS_ENABLED:true}
+  agent-worker-url: ${AGENT_WORKER_URL:http://aftersales-agent-worker}
+  approval-enabled: ${APPROVAL_ENABLED:true}
+  delayed-shipment-threshold-hours: ${DELAYED_SHIPMENT_HOURS:48}
+  redis-cache-seconds: ${REDIS_CACHE_SECONDS:600}
+  elasticsearch-index-name: ${ES_INDEX:aftersales_products}
+  elasticsearch-url: ${ES_URL:http://localhost:19200}

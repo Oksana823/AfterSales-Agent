@@ -1,0 +1,1 @@
+create table if not exists model_call_log(id bigint primary key auto_increment, run_id bigint not null, scene varchar(128) not null, model_name varchar(128), elapsed_ms bigint not null, status varchar(32) not null, error_message text, created_at datetime not null, index idx_model_call_run_id(run_id));

@@ -1,0 +1,18 @@
+server:
+  port: ${GATEWAY_PORT:18080}
+
+spring:
+  application:
+    name: aftersales-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: aftersales-agent
+              uri: ${AGENT_URI:lb://aftersales-agent}
+              predicates:
+                - Path=/api/**

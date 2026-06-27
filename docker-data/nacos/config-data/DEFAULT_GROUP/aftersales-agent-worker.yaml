@@ -1,0 +1,13 @@
+harness:
+  llm-enabled: true
+
+spring:
+  ai:
+    model:
+      chat: openai
+    openai:
+      base-url: https://api.deepseek.com
+      chat:
+        options:
+          model: deepseek-v4-flash
+          temperature: 0.2
