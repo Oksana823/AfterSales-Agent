@@ -105,5 +105,5 @@ export function rejectRequest(id: number): Promise<{message: string}> {
 }
 
 export function rebuildProductIndex(): Promise<{message: string}> {
-    return request('/api/agent/products/index/rebuild', {method: 'POST'});
+    return request('/api/business/products/index/rebuild', {method: 'POST'});
 }

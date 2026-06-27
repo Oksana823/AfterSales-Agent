@@ -1,8 +1,8 @@
 package com.aftersales.platform.agent.agent;
 
 import com.aftersales.platform.agent.config.HarnessProperties;
-import com.aftersales.platform.agent.domain.Enums.TaskType;
-import com.aftersales.platform.agent.domain.Product;
+import com.aftersales.platform.common.domain.Enums.TaskType;
+import com.aftersales.platform.common.domain.Product;
 import com.aftersales.platform.agent.service.TraceService;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;

@@ -15,4 +15,8 @@ spring:
             - id: aftersales-agent
               uri: ${AGENT_URI:lb://aftersales-agent}
               predicates:
-                - Path=/api/**
+                - Path=/api/agent/**
+            - id: aftersales-business
+              uri: ${BUSINESS_URI:lb://aftersales-business}
+              predicates:
+                - Path=/api/business/**

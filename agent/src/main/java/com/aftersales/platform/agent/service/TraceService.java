@@ -1,8 +1,8 @@
 package com.aftersales.platform.agent.service;
 
 import com.aftersales.platform.agent.domain.AgentRun;
-import com.aftersales.platform.agent.domain.Enums.RunStatus;
-import com.aftersales.platform.agent.domain.Enums.TaskType;
+import com.aftersales.platform.common.domain.Enums.RunStatus;
+import com.aftersales.platform.common.domain.Enums.TaskType;
 import com.aftersales.platform.agent.domain.ToolCallLog;
 import com.aftersales.platform.agent.repository.TraceRepository;
 import org.springframework.data.redis.core.StringRedisTemplate;

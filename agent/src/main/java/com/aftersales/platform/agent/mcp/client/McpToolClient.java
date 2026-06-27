@@ -22,7 +22,7 @@ import java.util.Map;
 
 /**
  * 懒加载的 MCP Streamable HTTP 客户端。
- * 首次业务调用发生在 Web 服务启动完成后，因此可以安全连接本应用暴露的 /mcp。
+ * 首次业务调用时通过 Nacos 发现独立 Business MCP Server。
  */
 @Component
 public class McpToolClient {
@@ -31,12 +31,14 @@ public class McpToolClient {
     private final HarnessProperties properties;
     private final ObjectMapper objectMapper;
     private final TraceService traceService;
+    private final BusinessMcpEndpointResolver endpointResolver;
     private volatile McpSyncClient client;
 
-    public McpToolClient(HarnessProperties properties, ObjectMapper objectMapper, TraceService traceService) {
+    public McpToolClient(HarnessProperties properties, ObjectMapper objectMapper, TraceService traceService, BusinessMcpEndpointResolver endpointResolver) {
         this.properties = properties;
         this.objectMapper = objectMapper;
         this.traceService = traceService;
+        this.endpointResolver = endpointResolver;
     }
 
     public <T> T call(Long runId, String toolName, Map<String, Object> arguments, Class<T> resultType) {
@@ -77,7 +79,7 @@ public class McpToolClient {
             return client;
         }
 
-        URI configuredUri = URI.create(properties.getMcpServerUrl());
+        URI configuredUri = endpointResolver.resolve();
         String baseUrl = configuredUri.getScheme() + "://" + configuredUri.getAuthority();
         String endpoint = configuredUri.getPath();
         if (endpoint == null || endpoint.isBlank() || "/".equals(endpoint)) {
@@ -99,7 +101,7 @@ public class McpToolClient {
         newClient.initialize();
 
         int toolCount = newClient.listTools().tools().size();
-        log.info("MCP_CLIENT_CONNECTED url={} tools={}", properties.getMcpServerUrl(), toolCount);
+        log.info("MCP_CLIENT_CONNECTED url={} tools={}", configuredUri, toolCount);
         client = newClient;
         return newClient;
     }

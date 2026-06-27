@@ -3,12 +3,12 @@ package com.aftersales.platform.agent.service;
 import com.aftersales.platform.agent.agent.NlpExtractor;
 import com.aftersales.platform.agent.agent.AgentRoleGateway;
 import com.aftersales.platform.agent.domain.ApprovalRequest;
-import com.aftersales.platform.agent.domain.OrderInfo;
-import com.aftersales.platform.agent.domain.Product;
-import com.aftersales.platform.agent.domain.Ticket;
-import com.aftersales.platform.agent.domain.Enums.OrderStatus;
-import com.aftersales.platform.agent.domain.Enums.RunStatus;
-import com.aftersales.platform.agent.domain.Enums.TaskType;
+import com.aftersales.platform.common.domain.OrderInfo;
+import com.aftersales.platform.common.domain.Product;
+import com.aftersales.platform.common.domain.Ticket;
+import com.aftersales.platform.common.domain.Enums.OrderStatus;
+import com.aftersales.platform.common.domain.Enums.RunStatus;
+import com.aftersales.platform.common.domain.Enums.TaskType;
 import com.aftersales.platform.agent.mcp.client.AgentToolGateway;
 import org.springframework.stereotype.Service;
 

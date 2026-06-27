@@ -1,7 +1,7 @@
 package com.aftersales.platform.agent.agent;
 
-import com.aftersales.platform.agent.domain.Enums.TaskType;
-import com.aftersales.platform.agent.domain.Product;
+import com.aftersales.platform.common.domain.Enums.TaskType;
+import com.aftersales.platform.common.domain.Product;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

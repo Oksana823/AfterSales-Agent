@@ -29,30 +29,20 @@ spring:
     model:
       chat: openai
     openai:
-      base-url: https://api.deepseek.com
+      base-url: ${AI_BASE_URL:https://api.deepseek.com}
       api-key: ${AI_API_KEY:not-configured}
       chat:
         options:
-          model: deepseek-v4-flash
+          model: ${AI_CHAT_MODEL:deepseek-v4-flash}
           temperature: ${AI_TEMPERATURE:0.2}
-    mcp:
-      server:
-        name: aftersales-mcp-server
-        version: 1.0.0
-        type: SYNC
-        protocol: STREAMABLE
 
 harness:
   llm-enabled: ${AI_ENABLED:true}
-  mcp-server-url: ${MCP_SERVER_URL:http://localhost:8050}
+  business-service-name: ${BUSINESS_SERVICE_NAME:aftersales-business}
+  business-mcp-url: ${BUSINESS_MCP_URL:}
   mcp-client-enabled: ${MCP_CLIENT_ENABLED:true}
-  mcp-fallback-enabled: ${MCP_FALLBACK_ENABLED:true}
   mcp-request-timeout-seconds: ${MCP_REQUEST_TIMEOUT_SECONDS:10}
   max-tool-calls: ${AGENT_MAX_TOOL_CALLS:12}
   distributed-agents-enabled: ${DISTRIBUTED_AGENTS_ENABLED:true}
   agent-worker-url: ${AGENT_WORKER_URL:http://aftersales-agent-worker}
   approval-enabled: ${APPROVAL_ENABLED:true}
-  delayed-shipment-threshold-hours: ${DELAYED_SHIPMENT_HOURS:48}
-  redis-cache-seconds: ${REDIS_CACHE_SECONDS:600}
-  elasticsearch-index-name: ${ES_INDEX:aftersales_products}
-  elasticsearch-url: ${ES_URL:http://localhost:19200}

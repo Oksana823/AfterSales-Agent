@@ -1,6 +1,6 @@
 package com.aftersales.platform.agent.agent;
 
-import com.aftersales.platform.agent.domain.Product;
+import com.aftersales.platform.common.domain.Product;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

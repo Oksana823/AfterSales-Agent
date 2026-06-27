@@ -2,10 +2,10 @@ package com.aftersales.platform.agent.service;
 
 import com.aftersales.platform.agent.agent.ReporterAgent;
 import com.aftersales.platform.agent.domain.ApprovalRequest;
-import com.aftersales.platform.agent.domain.Enums.ApprovalStatus;
-import com.aftersales.platform.agent.domain.Enums.OrderStatus;
-import com.aftersales.platform.agent.domain.Enums.RunStatus;
-import com.aftersales.platform.agent.domain.OrderInfo;
+import com.aftersales.platform.common.domain.Enums.ApprovalStatus;
+import com.aftersales.platform.common.domain.Enums.OrderStatus;
+import com.aftersales.platform.common.domain.Enums.RunStatus;
+import com.aftersales.platform.common.domain.OrderInfo;
 import com.aftersales.platform.agent.mcp.client.AgentToolGateway;
 import com.aftersales.platform.agent.repository.ApprovalRepository;
 import org.springframework.stereotype.Service;

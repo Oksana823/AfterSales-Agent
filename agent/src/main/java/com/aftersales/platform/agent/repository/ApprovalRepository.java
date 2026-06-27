@@ -1,7 +1,7 @@
 package com.aftersales.platform.agent.repository;
 
 import com.aftersales.platform.agent.domain.ApprovalRequest;
-import com.aftersales.platform.agent.domain.Enums.ApprovalStatus;
+import com.aftersales.platform.common.domain.Enums.ApprovalStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
