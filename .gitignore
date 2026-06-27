@@ -3,3 +3,7 @@ target
 .$*
 .DS_Store
 .env
+docker-data/
+agent-chat-ui/node_modules/
+agent-chat-ui/build/
+*.log
