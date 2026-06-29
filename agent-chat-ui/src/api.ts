@@ -1,7 +1,9 @@
 export interface AgentResponse {
     runId: number;
     taskType: string;
+    status: string;
     answer: string;
+    warnings: RunWarning[];
 }
 
 export interface AgentRun {
@@ -47,11 +49,19 @@ export interface ModelCallLog {
     createdAt: string;
 }
 
+export interface RunWarning {
+    code: string;
+    scene: string;
+    message: string;
+    userVisible: boolean;
+}
+
 export interface RunDetail {
     run: AgentRun;
     steps: AgentStep[];
     toolCalls: ToolCallLog[];
     modelCalls: ModelCallLog[];
+    warnings: RunWarning[];
 }
 
 export interface ApprovalRequest {
@@ -65,14 +75,29 @@ export interface ApprovalRequest {
     handledAt: string | null;
 }
 
+export class ApiRequestError extends Error {
+    constructor(message: string, public readonly status: number, public readonly runId?: number) {
+        super(message);
+        this.name = 'ApiRequestError';
+    }
+}
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
     const response = await fetch(path, {
         ...init,
         headers: {'Content-Type': 'application/json', ...init?.headers},
     });
     if (!response.ok) {
-        const message = await response.text();
-        throw new Error(message || '请求失败（' + response.status + '）');
+        const body = await response.text();
+        let message = body || '请求失败（' + response.status + '）';
+        let runId: number | undefined;
+        try {
+            const error = JSON.parse(body) as {message?: string; runId?: number};
+            message = error.message || message;
+            runId = error.runId;
+        } catch {
+            // 非 JSON 错误响应保留原文。
+        }
+        throw new ApiRequestError(message, response.status, runId);
     }
     return response.json() as Promise<T>;
 }

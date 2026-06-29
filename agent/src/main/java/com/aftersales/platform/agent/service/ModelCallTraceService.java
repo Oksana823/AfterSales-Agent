@@ -24,4 +24,6 @@ public class ModelCallTraceService {
     public List<ModelCallLog> findByRunId(Long runId) {
         return repository.findByRunId(runId);
     }
+    public boolean hasNonSuccess(Long runId) { return repository.hasNonSuccess(runId); }
+    public boolean hasNonSuccess(Long runId, String scene) { return repository.hasNonSuccess(runId, scene); }
 }

@@ -697,3 +697,5 @@ td pre {
         flex-direction: column;
     }
 }
+
+.degradation-warning { margin: 10px 0; padding: 10px 12px; border-left: 3px solid #c58a00; background: #fff7df; color: #6b4b00; font-size: 13px; line-height: 1.5; }

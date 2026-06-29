@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import './App.css';
 import {
     AgentResponse,
+    ApiRequestError,
     ApprovalRequest,
     RunDetail,
     approveRequest,
@@ -58,6 +59,9 @@ function App() {
         setLoading(true);
         setError('');
         setNotice('');
+        setResponse(null);
+        setDetail(null);
+        setRunIdInput('');
         try {
             const result = await submitTask(input.trim());
             setResponse(result);
@@ -65,8 +69,27 @@ function App() {
             setNotice('任务已执行，Run #' + result.runId + ' 的轨迹已载入。');
         } catch (e) {
             setError(errorMessage(e));
+            await loadFailedRun(e);
         } finally {
             setLoading(false);
+        }
+    }
+
+    async function loadFailedRun(error: unknown) {
+        if (!(error instanceof ApiRequestError) || !error.runId) return;
+        try {
+            const failed = await getRun(error.runId);
+            setDetail(failed);
+            setRunIdInput(String(error.runId));
+            setResponse({
+                runId: error.runId,
+                taskType: failed.run.taskType,
+                status: failed.run.status,
+                answer: failed.run.finalAnswer || error.message,
+                warnings: failed.warnings || [],
+            });
+        } catch {
+            // 保留原始业务错误；Trace 查询失败不覆盖它。
         }
     }
 
@@ -98,6 +121,7 @@ function App() {
             setNotice('Replay 完成，已生成新 Run #' + result.runId + '。');
         } catch (e) {
             setError(errorMessage(e));
+            await loadFailedRun(e);
         } finally {
             setLoading(false);
         }
@@ -158,7 +182,7 @@ function App() {
                 </nav>
                 <div className="sidebar__status">
                     <span className="status-dot"/>
-                    Gateway :8080
+                    Gateway :18080
                 </div>
             </aside>
 
@@ -265,7 +289,7 @@ function TaskView({input, setInput, response, loading, onSubmit, onShowTrace}: {
             <section className="result-panel">
                 <div className="section-heading">
                     <h2>执行结果</h2>
-                    {response && <Status value={response.taskType}/>}
+                    {response && <Status value={response.status || response.taskType}/>}
                 </div>
                 {response ? (
                     <>
@@ -273,6 +297,9 @@ function TaskView({input, setInput, response, loading, onSubmit, onShowTrace}: {
                             <div><dt>Run ID</dt><dd>#{response.runId}</dd></div>
                             <div><dt>任务类型</dt><dd>{taskTypeName(response.taskType)}</dd></div>
                         </dl>
+                        {response.warnings?.filter((warning) => warning.userVisible).map((warning) => (
+                            <div className="degradation-warning" key={warning.code + warning.scene}>{warning.message}</div>
+                        ))}
                         <div className="answer">{response.answer}</div>
                         <button className="text-button" onClick={onShowTrace}>查看完整执行轨迹 →</button>
                     </>
@@ -315,6 +342,13 @@ function TraceView({detail, runIdInput, setRunIdInput, loading, onLookup, onRepl
                         </div>
                         <Status value={detail.run.status}/>
                     </section>
+
+                    {(detail.warnings || []).length > 0 && (
+                        <section className="trace-section">
+                            <h2>Degradation Warnings <span>{detail.warnings.length}</span></h2>
+                            {detail.warnings.map((warning) => <div className="degradation-warning" key={warning.code + warning.scene}><strong>{warning.code}</strong> · {warning.scene}：{warning.message}</div>)}
+                        </section>
+                    )}
 
                     <section className="trace-section">
                         <h2>Agent Steps <span>{detail.steps.length}</span></h2>
@@ -468,11 +502,20 @@ function statusName(value: string): string {
     return {
         RUNNING: '执行中',
         COMPLETED: '已完成',
+        COMPLETED_WITH_WARNINGS: '降级完成',
         FAILED: '失败',
         WAITING_APPROVAL: '等待审批',
         PENDING: '待审批',
         SUCCESS: '成功',
         ERROR: '异常',
+        DISABLED: '已关闭',
+        UNAVAILABLE: '不可用',
+        AUTH_FAILED: '鉴权失败',
+        RATE_LIMITED: '限流',
+        TIMEOUT: '超时',
+        SERVER_ERROR: '服务异常',
+        EMPTY_RESPONSE: '空响应',
+        INVALID_OUTPUT: '格式异常',
         AFTER_SALES: '售后处理',
         CANCEL_ORDER: '取消订单',
         PRODUCT_CONSULTATION: '商品咨询',

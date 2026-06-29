@@ -7,6 +7,7 @@ import com.aftersales.platform.common.domain.Enums.OrderStatus;
 import com.aftersales.platform.common.domain.Enums.RunStatus;
 import com.aftersales.platform.common.domain.OrderInfo;
 import com.aftersales.platform.agent.mcp.client.AgentToolGateway;
+import com.aftersales.platform.agent.plan.PlanAction;
 import com.aftersales.platform.agent.repository.ApprovalRepository;
 import org.springframework.stereotype.Service;
 
@@ -64,7 +65,8 @@ public class ApprovalService {
         }
 
         String answer = reporter.cancelApproved(order.id());
-        trace.step(approval.runId(), "Order Agent", "审批后取消订单", answer);
+        trace.step(approval.runId(), "Plan Executor", PlanAction.CANCEL_ORDER.name(),
+                "SUCCESS, orderId=" + order.id());
         trace.finish(approval.runId(), RunStatus.COMPLETED, answer);
         return answer;
     }

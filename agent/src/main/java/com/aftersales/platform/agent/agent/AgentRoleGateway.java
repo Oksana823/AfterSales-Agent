@@ -2,9 +2,9 @@ package com.aftersales.platform.agent.agent;
 
 import com.aftersales.platform.agent.config.HarnessProperties;
 import com.aftersales.platform.common.domain.Enums.TaskType;
+import com.aftersales.platform.agent.plan.ExecutionPlan;
 import com.aftersales.platform.common.domain.Product;
 import com.aftersales.platform.agent.service.TraceService;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -47,15 +47,11 @@ public class AgentRoleGateway {
         );
     }
 
-    public List<String> plan(Long runId, TaskType taskType, String input) {
+    public ExecutionPlan plan(Long runId, TaskType taskType, String input) {
         return remoteOrLocal(
                 runId,
                 "Planner",
-                () -> restClient.post()
-                        .uri(url("/plan"))
-                        .body(new PlanRequest(runId, taskType, input))
-                        .retrieve()
-                        .body(new ParameterizedTypeReference<List<String>>() {}),
+                () -> post("/plan", new PlanRequest(runId, taskType, input), ExecutionPlan.class),
                 () -> localPlanner.plan(runId, taskType, input)
         );
     }
@@ -70,14 +66,14 @@ public class AgentRoleGateway {
         return Boolean.TRUE.equals(result);
     }
 
-    public String afterSalesReply(Long runId, Long orderId, String productName, String policy) {
+    public String afterSalesReply(Long runId, Long ticketId, Long orderId, String productName, String policy) {
         return remoteOrLocal(
                 runId,
                 "Reporter Agent",
                 () -> post("/report/after-sales",
-                        new AfterSalesReportRequest(runId, orderId, productName, policy),
+                        new AfterSalesReportRequest(runId, ticketId, orderId, productName, policy),
                         String.class),
-                () -> localReporter.afterSalesReply(runId, orderId, productName, policy)
+                () -> localReporter.afterSalesReply(runId, ticketId, orderId, productName, policy)
         );
     }
 
@@ -133,6 +129,6 @@ public class AgentRoleGateway {
     private record PlanRequest(Long runId, TaskType taskType, String input) {}
     private record RiskRequest(Long runId, String action) {}
     private record AfterSalesReportRequest(
-            Long runId, Long orderId, String productName, String policy) {}
+            Long runId, Long ticketId, Long orderId, String productName, String policy) {}
     private record ProductReportRequest(Long runId, List<Product> products) {}
 }

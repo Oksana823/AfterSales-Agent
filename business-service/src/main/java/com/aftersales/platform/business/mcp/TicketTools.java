@@ -20,6 +20,11 @@ public class TicketTools {
         return log.call(runId, "ticket.createTicket", Map.of("orderId", orderId, "userId", userId, "productId", productId, "reason", reason), () -> ticketService.create(orderId, userId, productId, reason, reply));
     }
 
+    @Tool(description = "更新工单客服回复")
+    public Ticket updateTicketCustomerReply(@ToolParam(description = "Agent run id") Long runId, @ToolParam(description = "工单ID") Long ticketId, @ToolParam(description = "客服回复") String reply) {
+        return log.call(runId, "ticket.updateCustomerReply", Map.of("ticketId", ticketId), () -> ticketService.updateCustomerReply(ticketId, reply));
+    }
+
     @Tool(description = "查询工单详情")
     public Ticket getTicket(@ToolParam(description = "Agent run id") Long runId, @ToolParam(description = "工单ID") Long ticketId) {
         return log.call(runId, "ticket.getTicket", Map.of("ticketId", ticketId), () -> ticketService.get(ticketId));

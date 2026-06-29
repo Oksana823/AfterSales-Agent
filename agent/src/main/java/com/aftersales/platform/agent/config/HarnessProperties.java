@@ -11,7 +11,6 @@ public class HarnessProperties {
     private int maxToolCalls = 12;
     private boolean distributedAgentsEnabled = true;
     private String agentWorkerUrl = "http://aftersales-agent-worker";
-    private boolean approvalEnabled = true;
     private boolean llmEnabled = false;
     public String getBusinessServiceName() { return businessServiceName; }
     public void setBusinessServiceName(String value) { this.businessServiceName = value; }
@@ -27,8 +26,6 @@ public class HarnessProperties {
     public void setDistributedAgentsEnabled(boolean value) { this.distributedAgentsEnabled = value; }
     public String getAgentWorkerUrl() { return agentWorkerUrl; }
     public void setAgentWorkerUrl(String value) { this.agentWorkerUrl = value; }
-    public boolean isApprovalEnabled() { return approvalEnabled; }
-    public void setApprovalEnabled(boolean value) { this.approvalEnabled = value; }
     public boolean isLlmEnabled() { return llmEnabled; }
     public void setLlmEnabled(boolean value) { this.llmEnabled = value; }
 }

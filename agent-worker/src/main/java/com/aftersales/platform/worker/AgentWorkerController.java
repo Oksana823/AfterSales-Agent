@@ -5,6 +5,7 @@ import com.aftersales.platform.agent.agent.ReporterAgent;
 import com.aftersales.platform.agent.agent.RiskAgent;
 import com.aftersales.platform.agent.agent.SupervisorAgent;
 import com.aftersales.platform.common.domain.Enums.TaskType;
+import com.aftersales.platform.agent.plan.ExecutionPlan;
 import com.aftersales.platform.common.domain.Product;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,7 +36,7 @@ public class AgentWorkerController {
     }
 
     @PostMapping("/plan")
-    public List<String> plan(@RequestBody PlanRequest request) {
+    public ExecutionPlan plan(@RequestBody PlanRequest request) {
         return planner.plan(request.runId(), request.taskType(), request.input());
     }
 
@@ -47,7 +48,7 @@ public class AgentWorkerController {
     @PostMapping("/report/after-sales")
     public String afterSalesReport(@RequestBody AfterSalesReportRequest request) {
         return reporter.afterSalesReply(
-                request.runId(), request.orderId(), request.productName(), request.policy()
+                request.runId(), request.ticketId(), request.orderId(), request.productName(), request.policy()
         );
     }
 
@@ -60,6 +61,6 @@ public class AgentWorkerController {
     public record PlanRequest(Long runId, TaskType taskType, String input) {}
     public record RiskRequest(Long runId, String action) {}
     public record AfterSalesReportRequest(
-            Long runId, Long orderId, String productName, String policy) {}
+            Long runId, Long ticketId, Long orderId, String productName, String policy) {}
     public record ProductReportRequest(Long runId, List<Product> products) {}
 }
