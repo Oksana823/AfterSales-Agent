@@ -125,10 +125,19 @@ public class AgentRoleGateway {
         return properties.getAgentWorkerUrl() + "/internal/agents" + path;
     }
 
-    private record ClassifyRequest(Long runId, String input) {}
-    private record PlanRequest(Long runId, TaskType taskType, String input) {}
-    private record RiskRequest(Long runId, String action) {}
+    private record ClassifyRequest(Long runId, String input) {
+    }
+
+    private record PlanRequest(Long runId, TaskType taskType, String input) {
+    }
+
+    private record RiskRequest(Long runId, String action) {
+    }
+
     private record AfterSalesReportRequest(
-            Long runId, Long ticketId, Long orderId, String productName, String policy) {}
-    private record ProductReportRequest(Long runId, List<Product> products) {}
+            Long runId, Long ticketId, Long orderId, String productName, String policy) {
+    }
+
+    private record ProductReportRequest(Long runId, List<Product> products) {
+    }
 }

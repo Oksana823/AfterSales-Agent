@@ -22,7 +22,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(ApiError.of(400, message));
     }
 
-    /** 任务失败时返回 runId，前端仍可展示本次失败运行及其 Trace。 */
+    /**
+     * 任务失败时返回 runId，前端仍可展示本次失败运行及其 Trace。
+     */
     @ExceptionHandler(RunExecutionException.class)
     public ResponseEntity<ApiError> runFailure(RunExecutionException exception) {
         Throwable cause = exception.getCause();

@@ -1,10 +1,13 @@
 package com.aftersales.platform.agent.plan;
 
 import com.aftersales.platform.common.domain.Enums.TaskType;
+
 import java.util.List;
 
 public final class PlanTemplates {
-    private PlanTemplates() {}
+    private PlanTemplates() {
+    }
+
     public static ExecutionPlan forType(TaskType type) {
         return new ExecutionPlan(type, switch (type) {
             case AFTER_SALES -> List.of(
@@ -26,6 +29,12 @@ public final class PlanTemplates {
             case UNKNOWN -> List.of(step("unsupported", PlanAction.RETURN_UNSUPPORTED));
         });
     }
-    private static PlanStep step(String id, PlanAction action) { return new PlanStep(id, action, null, false); }
-    private static PlanStep conditional(String id, PlanAction action) { return new PlanStep(id, action, "delayed == true", false); }
+
+    private static PlanStep step(String id, PlanAction action) {
+        return new PlanStep(id, action, null, false);
+    }
+
+    private static PlanStep conditional(String id, PlanAction action) {
+        return new PlanStep(id, action, "delayed == true", false);
+    }
 }

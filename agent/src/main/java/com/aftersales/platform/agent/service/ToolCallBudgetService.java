@@ -18,7 +18,9 @@ public class ToolCallBudgetService {
         this.properties = properties;
     }
 
-    /** 每个 run 在调用工具前原子计数，超过配置上限立即终止。 */
+    /**
+     * 每个 run 在调用工具前原子计数，超过配置上限立即终止。
+     */
     public void acquire(Long runId) {
         int limit = properties.getMaxToolCalls();
         if (limit <= 0) {

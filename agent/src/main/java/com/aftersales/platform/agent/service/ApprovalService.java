@@ -39,7 +39,9 @@ public class ApprovalService {
         return approvals.pending();
     }
 
-    /** 审批通过后签发一次性授权，再通过 MCP 调用取消工具。 */
+    /**
+     * 审批通过后签发一次性授权，再通过 MCP 调用取消工具。
+     */
     public String approve(Long id) {
         ApprovalRequest approval = pendingApproval(id);
         OrderInfo current = tools.getOrder(approval.runId(), approval.orderId());

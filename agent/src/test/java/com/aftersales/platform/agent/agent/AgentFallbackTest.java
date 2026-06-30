@@ -83,9 +83,11 @@ class AgentFallbackTest {
                         PlanAction.CANCEL_ORDER
                 );
     }
+
     private static AiModelService unavailableModel() {
         AiModelService model = mock(AiModelService.class);
-        when(model.generate(org.mockito.ArgumentMatchers.anyLong(), anyString(), anyString(), anyString())).thenReturn(new AiModelService.ModelResult(AiModelService.ModelStatus.UNAVAILABLE, null));
+        when(model.generate(org.mockito.ArgumentMatchers.anyLong(), anyString(), anyString(), anyString())).thenReturn(
+                new AiModelService.ModelResult(AiModelService.ModelStatus.UNAVAILABLE, null));
         return model;
     }
 }

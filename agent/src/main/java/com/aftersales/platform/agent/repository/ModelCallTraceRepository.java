@@ -41,13 +41,17 @@ public class ModelCallTraceRepository {
                 runId
         );
     }
+
     public boolean hasNonSuccess(Long runId) {
-        Integer count = jdbc.queryForObject("select count(*) from model_call_log where run_id=? and status<>'SUCCESS'", Integer.class, runId);
+        Integer count = jdbc.queryForObject("select count(*) from model_call_log where run_id=? and status<>'SUCCESS'",
+                Integer.class, runId);
         return count != null && count > 0;
     }
 
     public boolean hasNonSuccess(Long runId, String scene) {
-        Integer count = jdbc.queryForObject("select count(*) from model_call_log where run_id=? and scene=? and status<>'SUCCESS'", Integer.class, runId, scene);
+        Integer count = jdbc.queryForObject(
+                "select count(*) from model_call_log where run_id=? and scene=? and status<>'SUCCESS'", Integer.class,
+                runId, scene);
         return count != null && count > 0;
     }
 }

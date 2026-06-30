@@ -23,14 +23,17 @@ public class ProductSearchService {
     private final BusinessProperties properties;
     private final ObjectMapper mapper;
 
-    public ProductSearchService(ProductRepository repository, RestClient restClient, BusinessProperties properties, ObjectMapper mapper) {
+    public ProductSearchService(ProductRepository repository, RestClient restClient, BusinessProperties properties,
+                                ObjectMapper mapper) {
         this.repository = repository;
         this.restClient = restClient;
         this.properties = properties;
         this.mapper = mapper;
     }
 
-    /** 商品咨询必须走 Elasticsearch，这里只解析商品搜索结果，不回退到 MySQL。 */
+    /**
+     * 商品咨询必须走 Elasticsearch，这里只解析商品搜索结果，不回退到 MySQL。
+     */
     public List<Product> search(String keyword) {
         try {
             Map<String, Object> query = Map.of(
@@ -47,7 +50,9 @@ public class ProductSearchService {
             request.setJsonEntity(mapper.writeValueAsString(query));
 
             Response response = restClient.performRequest(request);
-            Map<String, Object> responseBody = mapper.readValue(EntityUtils.toString(response.getEntity()), new TypeReference<>() {});
+            Map<String, Object> responseBody = mapper.readValue(EntityUtils.toString(response.getEntity()),
+                    new TypeReference<>() {
+                    });
             Map<String, Object> hitsBody = (Map<String, Object>) responseBody.get("hits");
             List<Map<String, Object>> hits = (List<Map<String, Object>>) hitsBody.get("hits");
 
@@ -71,7 +76,9 @@ public class ProductSearchService {
         }
     }
 
-    /** 将 MySQL 中的测试商品同步到 Elasticsearch，便于本地一键验证商品咨询流程。 */
+    /**
+     * 将 MySQL 中的测试商品同步到 Elasticsearch，便于本地一键验证商品咨询流程。
+     */
     public void rebuildIndex() {
         try {
             restClient.performRequest(new Request("PUT", "/" + properties.getElasticsearchIndexName()));
@@ -81,7 +88,8 @@ public class ProductSearchService {
 
         for (Product product : repository.findAll()) {
             try {
-                Request request = new Request("PUT", "/" + properties.getElasticsearchIndexName() + "/_doc/" + product.id());
+                Request request = new Request("PUT",
+                        "/" + properties.getElasticsearchIndexName() + "/_doc/" + product.id());
                 request.setJsonEntity(mapper.writeValueAsString(Map.of(
                         "productId", product.id(),
                         "name", product.name(),

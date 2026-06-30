@@ -18,17 +18,25 @@ public class PlannerAgent {
             """;
     private final AiModelService aiModel;
     private final ObjectMapper mapper;
-    public PlannerAgent(AiModelService aiModel, ObjectMapper mapper) { this.aiModel = aiModel; this.mapper = mapper; }
+
+    public PlannerAgent(AiModelService aiModel, ObjectMapper mapper) {
+        this.aiModel = aiModel;
+        this.mapper = mapper;
+    }
 
     public ExecutionPlan plan(Long runId, TaskType type, String input) {
         String request = "任务类型：" + type.name() + System.lineSeparator() + "用户输入：" + input;
         AiModelService.ModelResult result = aiModel.generate(runId, "planner.plan", SYSTEM_PROMPT, request);
-        if (!result.success()) return PlanTemplates.forType(type);
+        if (!result.success()) {
+            return PlanTemplates.forType(type);
+        }
         try {
             String content = result.content();
             int start = content.indexOf('{');
             int end = content.lastIndexOf('}');
-            if (start < 0 || end <= start) throw new IllegalArgumentException("缺少JSON对象");
+            if (start < 0 || end <= start) {
+                throw new IllegalArgumentException("缺少JSON对象");
+            }
             return mapper.readValue(content.substring(start, end + 1), ExecutionPlan.class);
         } catch (Exception exception) {
             aiModel.recordInvalidOutput(runId, "planner.plan");

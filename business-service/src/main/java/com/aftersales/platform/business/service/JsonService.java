@@ -7,9 +7,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class JsonService {
     private final ObjectMapper mapper;
-    public JsonService(ObjectMapper mapper) { this.mapper = mapper; }
+
+    public JsonService(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
+
     public String toJson(Object value) {
-        try { return mapper.writeValueAsString(value); }
-        catch (JsonProcessingException e) { return String.valueOf(value); }
+        try {
+            return mapper.writeValueAsString(value);
+        } catch (JsonProcessingException e) {
+            return String.valueOf(value);
+        }
     }
 }

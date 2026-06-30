@@ -10,7 +10,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class McpToolConfiguration {
-    @Bean ToolCallbackProvider afterSalesTools(OrderTools orders, ProductTools products, TicketTools tickets) {
+    @Bean
+    ToolCallbackProvider afterSalesTools(OrderTools orders, ProductTools products, TicketTools tickets) {
         return MethodToolCallbackProvider.builder().toolObjects(orders, products, tickets).build();
     }
 }

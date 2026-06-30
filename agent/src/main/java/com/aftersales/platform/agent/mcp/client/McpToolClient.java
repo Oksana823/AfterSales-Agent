@@ -34,7 +34,8 @@ public class McpToolClient {
     private final BusinessMcpEndpointResolver endpointResolver;
     private volatile McpSyncClient client;
 
-    public McpToolClient(HarnessProperties properties, ObjectMapper objectMapper, TraceService traceService, BusinessMcpEndpointResolver endpointResolver) {
+    public McpToolClient(HarnessProperties properties, ObjectMapper objectMapper, TraceService traceService,
+                         BusinessMcpEndpointResolver endpointResolver) {
         this.properties = properties;
         this.objectMapper = objectMapper;
         this.traceService = traceService;

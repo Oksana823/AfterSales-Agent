@@ -31,13 +31,16 @@ public class AgentOrchestrator {
         return execute(input, null);
     }
 
-    /** 分类后执行 Planner 生成并通过白名单校验的计划。 */
+    /**
+     * 分类后执行 Planner 生成并通过白名单校验的计划。
+     */
     public AgentResponse execute(String input, Long replayFromRunId) {
         Long runId = trace.createRun(input, TaskType.UNKNOWN, replayFromRunId);
         try {
             TaskType type = roles.classify(runId, input);
             if (type == TaskType.UNKNOWN && trace.hasModelFailure(runId, "supervisor.classify")) {
-                throw new AiUnavailableException("智能任务识别暂时不可用，且当前输入无法通过确定性规则安全分类，请稍后重试。");
+                throw new AiUnavailableException(
+                        "智能任务识别暂时不可用，且当前输入无法通过确定性规则安全分类，请稍后重试。");
             }
             trace.updateTaskType(runId, type);
             trace.step(runId, "Supervisor", "任务分类", type.name());
@@ -59,5 +62,6 @@ public class AgentOrchestrator {
     }
 
     public record AgentResponse(Long runId, String taskType, String status, String answer,
-                                List<TraceService.RunWarning> warnings) {}
+                                List<TraceService.RunWarning> warnings) {
+    }
 }

@@ -57,10 +57,19 @@ public class AgentWorkerController {
         return reporter.productAdvice(request.runId(), request.products());
     }
 
-    public record ClassifyRequest(Long runId, String input) {}
-    public record PlanRequest(Long runId, TaskType taskType, String input) {}
-    public record RiskRequest(Long runId, String action) {}
+    public record ClassifyRequest(Long runId, String input) {
+    }
+
+    public record PlanRequest(Long runId, TaskType taskType, String input) {
+    }
+
+    public record RiskRequest(Long runId, String action) {
+    }
+
     public record AfterSalesReportRequest(
-            Long runId, Long ticketId, Long orderId, String productName, String policy) {}
-    public record ProductReportRequest(Long runId, List<Product> products) {}
+            Long runId, Long ticketId, Long orderId, String productName, String policy) {
+    }
+
+    public record ProductReportRequest(Long runId, List<Product> products) {
+    }
 }

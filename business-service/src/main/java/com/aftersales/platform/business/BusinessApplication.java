@@ -8,5 +8,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @SpringBootApplication
 @EnableConfigurationProperties(BusinessProperties.class)
 public class BusinessApplication {
-    public static void main(String[] args) { SpringApplication.run(BusinessApplication.class, args); }
+    public static void main(String[] args) {
+        SpringApplication.run(BusinessApplication.class, args);
+    }
 }

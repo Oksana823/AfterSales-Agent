@@ -22,12 +22,16 @@ public class SupervisorAgent {
         this.aiModel = aiModel;
     }
 
-    /** 优先让模型识别任务；输出不合规或模型不可用时使用稳定规则回退。 */
+    /**
+     * 优先让模型识别任务；输出不合规或模型不可用时使用稳定规则回退。
+     */
     public TaskType classify(Long runId, String input) {
         AiModelService.ModelResult result = aiModel.generate(runId, "supervisor.classify", SYSTEM_PROMPT, input);
         if (result.success()) {
             Optional<TaskType> decision = parseTaskType(result.content());
-            if (decision.isPresent()) return decision.get();
+            if (decision.isPresent()) {
+                return decision.get();
+            }
             aiModel.recordInvalidOutput(runId, "supervisor.classify");
         }
         return classifyByRules(input);
