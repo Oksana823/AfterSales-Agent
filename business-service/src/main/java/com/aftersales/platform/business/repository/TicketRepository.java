@@ -9,6 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.sql.*;
 import java.util.*;
 
+/**
+ * ticket 表数据访问层，负责工单写入、查询和客服回复更新。
+ */
 @Repository
 public class TicketRepository {
     private final JdbcTemplate jdbc;
@@ -22,6 +25,7 @@ public class TicketRepository {
     }
 
     public Ticket create(Long orderId, Long userId, Long productId, String reason, String reply) {
+        // 使用 KeyHolder 获取新工单 ID，随后回查数据库得到完整记录。
         GeneratedKeyHolder keys = new GeneratedKeyHolder();
         jdbc.update(c -> {
             PreparedStatement ps = c.prepareStatement(

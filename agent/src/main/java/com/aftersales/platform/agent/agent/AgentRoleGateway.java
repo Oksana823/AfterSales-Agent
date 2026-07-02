@@ -104,16 +104,19 @@ public class AgentRoleGateway {
 
     private <T> T remoteOrLocal(Long runId, String role,
                                 Supplier<T> remoteCall, Supplier<T> localCall) {
+        // ===== 1) 关闭分布式模式时直接执行 Agent 服务内的本地角色 =====
         if (!properties.isDistributedAgentsEnabled()) {
             return localCall.get();
         }
         try {
+            // ===== 2) 开启分布式模式时，通过带负载均衡的 RestClient 调用 Agent Worker =====
             T result = remoteCall.get();
             if (result == null) {
                 throw new IllegalStateException("远程 Agent 返回空结果");
             }
             trace.step(runId, "Agent Dispatcher", role, "REMOTE");
             return result;
+            // ===== 3) Worker 不可用时记录降级 Trace，再回退本地角色保证核心流程可运行 =====
         } catch (RuntimeException exception) {
             trace.step(runId, "Agent Dispatcher", role,
                     "REMOTE_FAILED, fallback=LOCAL, error=" + exception.getMessage());

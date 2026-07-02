@@ -6,6 +6,9 @@ import com.aftersales.platform.common.domain.Enums.TaskType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 
+/**
+ * Planner 角色，把已分类任务转换为受约束的结构化 ExecutionPlan。
+ */
 @Component
 public class PlannerAgent {
     private static final String SYSTEM_PROMPT = """
@@ -25,12 +28,15 @@ public class PlannerAgent {
     }
 
     public ExecutionPlan plan(Long runId, TaskType type, String input) {
+        // ===== 1) 把 Supervisor 的分类结论和原始输入一起交给 Planner =====
         String request = "任务类型：" + type.name() + System.lineSeparator() + "用户输入：" + input;
         AiModelService.ModelResult result = aiModel.generate(runId, "planner.plan", SYSTEM_PROMPT, request);
+        // ===== 2) 模型不可用时返回代码模板，但 model_call_log 会明确记录降级 =====
         if (!result.success()) {
             return PlanTemplates.forType(type);
         }
         try {
+            // ===== 3) 只截取 JSON 对象并反序列化，最终仍必须经过 PlanValidator =====
             String content = result.content();
             int start = content.indexOf('{');
             int end = content.lastIndexOf('}');
@@ -38,6 +44,7 @@ public class PlannerAgent {
                 throw new IllegalArgumentException("缺少JSON对象");
             }
             return mapper.readValue(content.substring(start, end + 1), ExecutionPlan.class);
+            // ===== 4) 模型格式异常时记录 INVALID_OUTPUT，再使用安全模板 =====
         } catch (Exception exception) {
             aiModel.recordInvalidOutput(runId, "planner.plan");
             return PlanTemplates.forType(type);

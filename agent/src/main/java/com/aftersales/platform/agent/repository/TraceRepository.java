@@ -12,6 +12,9 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 使用 JdbcTemplate 持久化 agent_run、agent_step，并查询工具调用日志。
+ */
 @Repository
 public class TraceRepository {
     private final JdbcTemplate jdbc;

@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 确定性参数提取器，从用户输入中提取编号、取消理由和商品搜索关键词。
+ */
 @Component
 public class NlpExtractor {
 

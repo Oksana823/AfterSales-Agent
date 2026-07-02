@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 工单 MCP 工具适配层，对外暴露创建、查询和客服回复回写能力。
+ */
 @Component
 public class TicketTools {
     private final TicketService ticketService;

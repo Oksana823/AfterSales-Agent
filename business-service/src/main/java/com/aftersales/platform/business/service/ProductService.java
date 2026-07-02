@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 商品业务服务，协调 MySQL、Redis 商品缓存和 Elasticsearch 搜索。
+ */
 @Service
 public class ProductService {
     private final ProductRepository repository;

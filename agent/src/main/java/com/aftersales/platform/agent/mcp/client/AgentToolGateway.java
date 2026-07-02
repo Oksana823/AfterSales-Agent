@@ -75,6 +75,7 @@ public class AgentToolGateway {
     }
 
     private <T> T invoke(Long runId, String name, Map<String, Object> args, Class<T> type) {
+        // ===== 每次工具调用前先检查 MCP 开关，再原子占用当前 Run 的调用预算 =====
         ensureEnabled();
         budget.acquire(runId);
         return mcpClient.call(runId, name, args, type);

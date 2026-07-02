@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 商品 MCP 工具适配层，只做参数接收、调用日志和 ProductService 转发。
+ */
 @Component
 public class ProductTools {
     private final ProductService productService;

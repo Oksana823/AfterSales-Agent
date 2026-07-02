@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.net.URI;
 
+/**
+ * 根据业务配置创建 Elasticsearch 低级 RestClient，并由 Spring 管理连接生命周期。
+ */
 @Configuration
 public class ElasticsearchConfig {
     @Bean

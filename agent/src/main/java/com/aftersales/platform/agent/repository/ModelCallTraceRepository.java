@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * model_call_log 数据访问层，保存模型调用并支持按 Run 和场景判断降级状态。
+ */
 @Repository
 public class ModelCallTraceRepository {
     private final JdbcTemplate jdbc;

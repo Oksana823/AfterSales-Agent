@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 售后工单业务服务，提供 Redis 幂等创建、详情查询和客服回复回写。
+ */
 @Service
 public class TicketService {
     private final TicketRepository repository;
@@ -22,12 +25,15 @@ public class TicketService {
     }
 
     public Ticket create(Long orderId, Long userId, Long productId, String reason, String reply) {
+        // ===== 1) 以订单 ID 作为幂等键，同一订单在 TTL 内只允许一个创建者 =====
         String key = "idem:ticket:order:" + orderId;
         Boolean locked = redis.opsForValue().setIfAbsent(key, "1", properties.getRedisCacheSeconds(), TimeUnit.SECONDS);
+        // ===== 2) 未抢到幂等锁时直接返回已存在工单，避免重复插入 =====
         if (Boolean.FALSE.equals(locked)) {
             return repository.findByOrderId(orderId).stream().findFirst().orElseThrow(
                     () -> new IllegalStateException("工单创建中，请稍后查询"));
         }
+        // ===== 3) 只有成功获得 Redis 幂等锁的请求才能真正写 MySQL =====
         return repository.create(orderId, userId, productId, reason, reply);
     }
 

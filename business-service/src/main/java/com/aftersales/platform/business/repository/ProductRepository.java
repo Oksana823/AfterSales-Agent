@@ -8,6 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * product 表数据访问层，为详情、缓存和 ES 索引重建提供数据。
+ */
 @Repository
 public class ProductRepository {
     private final JdbcTemplate jdbc;

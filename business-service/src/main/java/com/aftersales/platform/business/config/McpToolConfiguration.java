@@ -8,6 +8,9 @@ import org.springframework.ai.tool.method.MethodToolCallbackProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * MCP Server 工具注册配置，将订单、商品和工单工具暴露给 Spring AI MCP。
+ */
 @Configuration
 public class McpToolConfiguration {
     @Bean

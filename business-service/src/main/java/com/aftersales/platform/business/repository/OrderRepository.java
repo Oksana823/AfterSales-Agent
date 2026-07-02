@@ -8,6 +8,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * order_info 表数据访问层，使用条件更新保证取消操作不会覆盖并发状态变化。
+ */
 @Repository
 public class OrderRepository {
     private final JdbcTemplate jdbc;

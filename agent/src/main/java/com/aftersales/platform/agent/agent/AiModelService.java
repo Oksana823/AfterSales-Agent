@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 
+/**
+ * 模型调用统一适配层，封装 Spring AI 调用、状态分类、敏感信息清理和 Trace。
+ */
 @Component
 public class AiModelService {
     private static final Logger log = LoggerFactory.getLogger(AiModelService.class);
@@ -33,17 +36,21 @@ public class AiModelService {
      * 返回结构化模型状态，调用方必须显式决定失败后的场景策略。
      */
     public ModelResult generate(Long runId, String scene, String systemPrompt, String userPrompt) {
+        // ===== 1) 模型开关关闭时不发网络请求，但仍记录 DISABLED Trace =====
         if (!properties.isLlmEnabled()) {
             return failure(runId, scene, ModelStatus.DISABLED, 0, null);
         }
+        // ===== 2) 延迟获取 ChatModel，使未配置模型时应用仍能启动并走规则降级 =====
         ChatModel chatModel = chatModelProvider.getIfAvailable();
         if (chatModel == null) {
             return failure(runId, scene, ModelStatus.UNAVAILABLE, 0, "ChatModel unavailable");
         }
 
+        // ===== 3) 统一统计模型耗时，便于在 model_call_log 中观测延迟 =====
         long startedAt = System.nanoTime();
         log.info("LLM_CALL_START runId={} scene={}", runId, scene);
         try {
+            // ===== 4) 通过 Spring AI ChatClient 发送 system prompt 和当前场景输入 =====
             String content = ChatClient.builder(chatModel).build().prompt()
                     .system(systemPrompt).user(userPrompt).call().content();
             long elapsed = elapsedMs(startedAt);
@@ -55,6 +62,7 @@ public class AiModelService {
             return new ModelResult(ModelStatus.SUCCESS, content.trim());
         } catch (RuntimeException exception) {
             long elapsed = elapsedMs(startedAt);
+            // ===== 5) 将供应商异常归一化为稳定状态，调用方据此选择降级或失败 =====
             ModelStatus status = classify(exception);
             log.warn("LLM_CALL_FAILED runId={} scene={} status={} elapsedMs={}", runId, scene, status, elapsed);
             return failure(runId, scene, status, elapsed, sanitize(exception.getMessage()));

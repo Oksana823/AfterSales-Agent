@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Harness Trace 门面，统一维护 Run 生命周期、Agent 步骤、降级告警和 Redis 运行状态。
+ */
 @Service
 public class TraceService {
     private final TraceRepository repository;
@@ -23,6 +26,7 @@ public class TraceService {
     }
 
     public Long createRun(String input, TaskType type, Long replayFromRunId) {
+        // ===== 创建数据库 Run 后同步缓存 RUNNING 状态，供快速状态查询和运行保护使用 =====
         Long id = repository.createRun(input, type, replayFromRunId);
         cacheStatus(id, RunStatus.RUNNING);
         return id;
@@ -37,6 +41,7 @@ public class TraceService {
     }
 
     public void finish(Long runId, RunStatus requested, String answer) {
+        // ===== 只有请求状态为 COMPLETED 时才检查降级；失败和等待审批保持原状态 =====
         RunStatus actual =
                 requested == RunStatus.COMPLETED && degraded(runId) ? RunStatus.COMPLETED_WITH_WARNINGS : requested;
         repository.updateRun(runId, actual, answer);
@@ -49,6 +54,7 @@ public class TraceService {
 
     public List<RunWarning> warnings(Long runId) {
         List<RunWarning> warnings = new ArrayList<>();
+        // ===== 汇总模型调用失败，生成前端可展示或仅审计的降级告警 =====
         for (ModelCallLog call : modelCalls.findByRunId(runId)) {
             if ("SUCCESS".equals(call.status())) {
                 continue;
@@ -61,6 +67,7 @@ public class TraceService {
                     : "模型能力已降级，当前步骤使用确定性规则完成。";
             warnings.add(new RunWarning("LLM_" + call.status(), call.scene(), message, reporter));
         }
+        // ===== 补充计划回退和远程 Agent 回退告警，使“看似成功”的降级不会被掩盖 =====
         if (repository.hasPlanFallback(runId)) {
             warnings.add(
                     new RunWarning("INVALID_PLAN", "planner.validation", "模型计划未通过安全校验，已使用标准执行计划。",

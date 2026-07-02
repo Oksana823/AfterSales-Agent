@@ -4,6 +4,9 @@ import com.aftersales.platform.common.domain.Enums.TaskType;
 
 import java.util.List;
 
+/**
+ * 确定性标准计划模板，在模型不可用或计划非法时提供安全回退流程。
+ */
 public final class PlanTemplates {
     private PlanTemplates() {
     }

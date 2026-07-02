@@ -8,6 +8,9 @@ import org.springframework.web.client.RestClient;
 
 import java.time.Duration;
 
+/**
+ * 分布式 Agent 配置，为 RestClient 注入 Spring Cloud 负载均衡能力。
+ */
 @Configuration
 public class DistributedAgentConfiguration {
 

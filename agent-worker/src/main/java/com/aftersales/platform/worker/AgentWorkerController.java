@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Agent Worker 内部接口，承接 Supervisor、Planner、Risk 和 Reporter 等远程角色调用。
+ */
 @RestController
 @RequestMapping("/internal/agents")
 public class AgentWorkerController {

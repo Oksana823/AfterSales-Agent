@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * 受控计划执行器，按照校验后的步骤调用 Agent 角色和 MCP 工具，并持续写入 Trace。
+ */
 @Component
 public class PlanExecutor {
     private static final String PENDING_REPLY = "客服回复待生成";
@@ -34,16 +37,21 @@ public class PlanExecutor {
      * 严格按已校验计划执行；所有业务动作仍通过MCP，敏感动作仍由Java审批策略控制。
      */
     public PlanExecutionResult execute(Long runId, String input, ExecutionPlan plan) {
+        // ===== 1) 为本次计划创建运行上下文，后续步骤通过它共享订单、商品和工单结果 =====
         State state = new State(input);
+        // ===== 2) 严格按 Planner 给出的有序步骤执行，而不是再按任务类型写死 switch 流程 =====
         for (PlanStep step : plan.steps()) {
+            // ===== 3) 前序步骤已得到终止结论时，后续步骤只记录 SKIPPED，不再调用工具 =====
             if (state.finished) {
                 record(runId, step, "SKIPPED, reason=流程已结束");
                 continue;
             }
+            // ===== 4) 执行计划中的条件守卫，未延迟发货时跳过商品、政策和工单步骤 =====
             if ("delayed == true".equals(step.condition()) && !Boolean.TRUE.equals(state.delayed)) {
                 record(runId, step, "SKIPPED, reason=未发生延迟发货");
                 continue;
             }
+            // ===== 5) 每个白名单动作映射到一个明确的 Agent 或 MCP 调用 =====
             switch (step.action()) {
                 case GET_LATEST_ORDER -> {
                     state.order = tools.getLatestOrder(runId, nlp.firstNumber(input));
@@ -82,6 +90,7 @@ public class PlanExecutor {
                     record(runId, step, "SUCCESS, orderId=" + state.order.id());
                 }
                 case VALIDATE_CANCELLABLE -> validateCancellation(runId, step, state);
+                // ===== 取消流程到这里暂停并返回 WAITING_APPROVAL，不能在初始请求中直接取消 =====
                 case CREATE_CANCEL_APPROVAL -> {
                     if (!roles.sensitive(runId, "cancelOrder")) {
                         throw new IllegalStateException("取消订单安全策略异常：未识别为敏感操作");
@@ -110,6 +119,7 @@ public class PlanExecutor {
                 }
             }
         }
+        // ===== 6) 所有步骤结束后，根据上下文生成确定性的最终业务结论 =====
         if (plan.taskType() == TaskType.AFTER_SALES && !Boolean.TRUE.equals(state.delayed)) {
             state.answer = "订单" + requireOrder(state).id() + "不满足已付款且超过阈值未发货条件。";
         }

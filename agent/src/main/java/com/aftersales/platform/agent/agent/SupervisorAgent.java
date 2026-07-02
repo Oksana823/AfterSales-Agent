@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 import java.util.Locale;
 import java.util.Optional;
 
+/**
+ * Supervisor 角色，结合规则与模型将自然语言输入分类为受支持的任务类型。
+ */
 @Component
 public class SupervisorAgent {
     private static final String SYSTEM_PROMPT = """

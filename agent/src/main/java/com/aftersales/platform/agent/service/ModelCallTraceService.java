@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * 模型调用 Trace 服务，负责记录并查询模型、场景、耗时、状态和异常信息。
+ */
 @Service
 public class ModelCallTraceService {
     private final ModelCallTraceRepository repository;

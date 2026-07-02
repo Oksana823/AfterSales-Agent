@@ -1,5 +1,8 @@
 package com.aftersales.platform.common.domain;
 
+/**
+ * 集中定义跨服务共享的任务、运行、审批、订单和工单状态枚举。
+ */
 public final class Enums {
     private Enums() {
     }

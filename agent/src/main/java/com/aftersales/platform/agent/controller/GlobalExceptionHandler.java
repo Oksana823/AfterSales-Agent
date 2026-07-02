@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 
+/**
+ * Agent API 统一异常处理器，将参数、业务、模型和运行异常转换为稳定的错误协议。
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

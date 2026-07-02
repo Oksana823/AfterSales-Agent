@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Reporter 角色，将可信业务结果生成客服回复或商品推荐，并在模型失败时诚实降级。
+ */
 @Component
 public class ReporterAgent {
     private static final String AFTER_SALES_SYSTEM = """

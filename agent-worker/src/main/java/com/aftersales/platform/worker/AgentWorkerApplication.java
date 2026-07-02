@@ -24,6 +24,9 @@ import org.springframework.context.annotation.Import;
         ModelCallTraceRepository.class,
         ModelCallTraceService.class
 })
+/**
+ * Agent Worker 服务启动入口，仅承载可独立部署的 Agent 角色与模型调用能力。
+ */
 public class AgentWorkerApplication {
     public static void main(String[] args) {
         SpringApplication.run(AgentWorkerApplication.class, args);

@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.function.Supplier;
 
+/**
+ * MCP 工具调用日志切面式服务，统一记录参数、结果、耗时、状态和异常。
+ */
 @Service
 public class BusinessToolLogService {
     private final JdbcTemplate jdbc;
@@ -16,11 +19,14 @@ public class BusinessToolLogService {
     }
 
     public <T> T call(Long runId, String toolName, Object args, Supplier<T> action) {
+        // ===== 所有 MCP 工具通过此方法执行，统一统计耗时并落 tool_call_log =====
         long started = System.currentTimeMillis();
         try {
+            // ===== 业务成功时同时保存参数和结构化结果 =====
             T result = action.get();
             save(runId, toolName, args, result, System.currentTimeMillis() - started, "SUCCESS", null);
             return result;
+            // ===== 业务失败也必须保存异常日志，然后原样抛给 MCP Client =====
         } catch (RuntimeException e) {
             save(runId, toolName, args, null, System.currentTimeMillis() - started, "FAILED", e.getMessage());
             throw e;

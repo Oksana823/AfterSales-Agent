@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+/**
+ * Agent 对外 REST API，提供自然语言任务、Trace、Replay 和 Approval 操作入口。
+ */
 @RestController
 @RequestMapping("/api/agent")
 public class AgentController {

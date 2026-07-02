@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * 敏感操作审批服务，负责创建审批、处理批准或拒绝，并在批准后恢复取消计划。
+ */
 @Service
 public class ApprovalService {
     private final ApprovalRepository approvals;
@@ -43,7 +46,9 @@ public class ApprovalService {
      * 审批通过后签发一次性授权，再通过 MCP 调用取消工具。
      */
     public String approve(Long id) {
+        // ===== 1) 只允许处理仍为 PENDING 的审批单，防止重复点击 =====
         ApprovalRequest approval = pendingApproval(id);
+        // ===== 2) 批准前重新查询订单，避免审批等待期间订单状态已经变化 =====
         OrderInfo current = tools.getOrder(approval.runId(), approval.orderId());
 
         if (current.status() == OrderStatus.CANCELLED) {
@@ -53,15 +58,18 @@ public class ApprovalService {
             return rejectInvalidOrder(approval, "订单状态" + current.status() + "不允许取消");
         }
 
+        // ===== 3) 在 Redis 签发两分钟一次性凭证，Business 没有凭证就拒绝取消 =====
         cancellationAuthorization.authorize(approval.runId(), approval.orderId(), approval.id());
         OrderInfo order;
         try {
+            // ===== 4) 恢复计划中的 CANCEL_ORDER，通过 MCP 调用真正修改订单 =====
             order = tools.cancelOrder(approval.runId(), approval.orderId(), approval.reason());
         } catch (RuntimeException exception) {
             cancellationAuthorization.revoke(approval.runId(), approval.orderId());
             throw exception;
         }
 
+        // ===== 5) 使用条件更新落库审批结果，防止并发审批覆盖 =====
         if (approvals.updateStatus(id, ApprovalStatus.APPROVED) != 1) {
             throw new IllegalStateException("审批状态已变化，请刷新后重试");
         }

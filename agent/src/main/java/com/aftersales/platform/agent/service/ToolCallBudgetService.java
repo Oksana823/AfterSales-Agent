@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 
+/**
+ * 基于 Redis 原子计数限制单个 Run 的 MCP 工具调用次数，防止 Agent 失控循环。
+ */
 @Service
 public class ToolCallBudgetService {
     private static final Duration COUNTER_TTL = Duration.ofHours(2);

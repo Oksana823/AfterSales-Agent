@@ -12,6 +12,9 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * approval_request 数据访问层，负责审批单创建、查询和条件状态更新。
+ */
 @Repository
 public class ApprovalRepository {
     private final JdbcTemplate jdbc;
@@ -31,6 +34,7 @@ public class ApprovalRepository {
     }
 
     public ApprovalRequest create(Long runId, String actionName, Long orderId, String reason) {
+        // 插入后取回数据库自增主键，再查询完整审批对象返回给编排层。
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(
@@ -61,6 +65,9 @@ public class ApprovalRepository {
         );
     }
 
+    /**
+     * 仅允许从 PENDING 更新，返回值为 0 表示审批已被其他请求处理。
+     */
     public int updateStatus(Long id, ApprovalStatus status) {
         return jdbc.update(
                 "update approval_request set status=?, handled_at=now() "

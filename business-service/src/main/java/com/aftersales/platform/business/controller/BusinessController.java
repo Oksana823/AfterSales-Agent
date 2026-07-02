@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+/**
+ * Business REST API，供人工验证业务数据和触发 Elasticsearch 索引重建。
+ */
 @RestController
 @RequestMapping("/api/business")
 public class BusinessController {

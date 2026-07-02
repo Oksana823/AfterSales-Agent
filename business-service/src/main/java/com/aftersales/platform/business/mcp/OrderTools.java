@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+/**
+ * 订单 MCP 工具适配层，对外暴露订单查询、延迟判断和取消能力。
+ */
 @Component
 public class OrderTools {
     private final OrderService orderService;

@@ -1,5 +1,8 @@
 package com.aftersales.platform.agent.plan;
 
+/**
+ * Planner 可输出的动作白名单，避免模型生成任意方法名或越权操作。
+ */
 public enum PlanAction {
     GET_LATEST_ORDER,
     CHECK_DELAYED_SHIPMENT,
